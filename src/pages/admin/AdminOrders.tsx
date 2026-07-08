@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import { ExternalLink } from 'lucide-react'
+import { Eye, ExternalLink } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -156,6 +157,16 @@ export function AdminOrders() {
                         </td>
                         <td className="px-4 py-3 text-muted-foreground text-xs">
                           {new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </td>
+                        <td className="px-4 py-3">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8"
+                            onClick={() => setSelectedOrder(order)}
+                          >
+                            <Eye className="size-4" />
+                          </Button>
                         </td>
                       </tr>
                     )
