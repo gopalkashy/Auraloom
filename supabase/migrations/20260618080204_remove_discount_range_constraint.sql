@@ -1,0 +1,1 @@
+ALTER TABLE products DROP CONSTRAINT IF EXISTS discount_range;
