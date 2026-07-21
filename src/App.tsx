@@ -15,6 +15,9 @@ import { ArtificialJewelleryPage } from '@/pages/ArtificialJewelleryPage'
 import { LadiesClothesPage } from '@/pages/LadiesClothesPage'
 import { SearchPage } from '@/pages/SearchPage'
 import { WishlistPage } from '@/pages/WishlistPage'
+import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage'
+import { ResetPasswordPage } from '@/pages/ResetPasswordPage'
+import { VerifyEmailPage } from '@/pages/VerifyEmailPage'
 import { AdminDashboard } from '@/pages/admin/AdminDashboard'
 import { AdminCategories } from '@/pages/admin/AdminCategories'
 import { AdminProducts } from '@/pages/admin/AdminProducts'
@@ -52,6 +55,9 @@ export function App() {
         <Route path="/offer-zone" element={<OfferZonePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
 
         {/* Auth-required routes */}
         <Route path="/checkout" element={<AuthRoute><CheckoutPage /></AuthRoute>} />
