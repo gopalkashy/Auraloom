@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { CheckCircle, Mail, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
