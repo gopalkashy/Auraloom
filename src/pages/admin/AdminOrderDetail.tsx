@@ -66,6 +66,19 @@ export function AdminOrderDetail() {
     load()
   }, [orderId, navigate])
 
+  const updatePaymentStatus = async (newStatus: string) => {
+    if (!order) return
+    setUpdating(true)
+    const { error } = await supabase.from('orders').update({ payment_status: newStatus }).eq('id', order.id)
+    if (error) {
+      toast.error('Failed to update payment status')
+    } else {
+      toast.success('Payment status updated')
+      setOrder({ ...order, payment_status: newStatus })
+    }
+    setUpdating(false)
+  }
+
   const updateStatus = async (newStatus: OrderStatus) => {
     if (!order) return
     setUpdating(true)
@@ -116,16 +129,33 @@ export function AdminOrderDetail() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Select value={order.status} onValueChange={(v) => updateStatus(v as OrderStatus)} disabled={updating}>
-              <SelectTrigger className="w-44">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {ALL_STATUS_OPTIONS.map(s => (
-                  <SelectItem key={s} value={s}>{STATUS_CONFIG[s]?.label ?? s}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-muted-foreground font-medium">Order Status</span>
+              <Select value={order.status} onValueChange={(v) => updateStatus(v as OrderStatus)} disabled={updating}>
+                <SelectTrigger className="w-44">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {ALL_STATUS_OPTIONS.map(s => (
+                    <SelectItem key={s} value={s}>{STATUS_CONFIG[s]?.label ?? s}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-muted-foreground font-medium">Payment Status</span>
+              <Select value={order.payment_status} onValueChange={updatePaymentStatus} disabled={updating}>
+                <SelectTrigger className="w-36">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="paid">Paid</SelectItem>
+                  <SelectItem value="failed">Failed</SelectItem>
+                  <SelectItem value="refunded">Refunded</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
@@ -295,7 +325,7 @@ export function AdminOrderDetail() {
               <CardContent className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Method</span>
-                  <span>COD</span>
+                  <span>{order.payment_method === 'cod' ? 'Cash on Delivery' : order.payment_method === 'upi' ? 'UPI' : order.payment_method === 'card' ? 'Card' : 'COD'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Status</span>

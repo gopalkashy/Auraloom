@@ -67,6 +67,18 @@ export function AdminOrders() {
     setUpdatingId(null)
   }
 
+  const updatePaymentStatus = async (orderId: string, paymentStatus: string) => {
+    setUpdatingId(orderId)
+    const { error } = await supabase.from('orders').update({ payment_status: paymentStatus }).eq('id', orderId)
+    if (error) { toast.error('Failed to update payment status') }
+    else {
+      toast.success('Payment status updated')
+      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, payment_status: paymentStatus } : o))
+      if (selectedOrder?.id === orderId) setSelectedOrder(prev => prev ? { ...prev, payment_status: paymentStatus } : prev)
+    }
+    setUpdatingId(null)
+  }
+
   const filtered = orders
 
   return (
@@ -133,8 +145,8 @@ export function AdminOrders() {
                         </td>
                         <td className="px-4 py-3 font-semibold">₹{order.total.toLocaleString('en-IN')}</td>
                         <td className="px-4 py-3">
-                          <Badge variant={order.payment_status === 'paid' ? 'default' : 'secondary'} className="text-[10px]">
-                            {order.payment_status}
+                          <Badge variant={order.payment_status === 'paid' ? 'default' : order.payment_status === 'failed' ? 'destructive' : 'secondary'} className="text-[10px] capitalize">
+                            {order.payment_status === 'paid' ? 'Paid' : order.payment_status === 'failed' ? 'Failed' : order.payment_status === 'refunded' ? 'Refunded' : 'Pending'}
                           </Badge>
                         </td>
                         <td className="px-4 py-3">
@@ -143,10 +155,8 @@ export function AdminOrders() {
                             onValueChange={(v) => updateStatus(order.id, v as OrderStatus)}
                             disabled={updatingId === order.id}
                           >
-                            <SelectTrigger className="h-7 w-32 text-xs">
-                              <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${cfg.className}`}>
-                                {cfg.label}
-                              </span>
+                            <SelectTrigger className="h-7 w-36 text-xs">
+                              <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                               {ALL_STATUS_OPTIONS.map(s => (
@@ -187,25 +197,42 @@ export function AdminOrders() {
           {selectedOrder && (
             <div className="space-y-5 py-1">
               {/* Status update */}
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-muted-foreground">Status:</span>
-                <Select
-                  value={selectedOrder.status}
-                  onValueChange={(v) => updateStatus(selectedOrder.id, v as OrderStatus)}
-                  disabled={!!updatingId}
-                >
-                  <SelectTrigger className="h-8 w-36 text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ALL_STATUS_OPTIONS.map(s => (
-                      <SelectItem key={s} value={s} className="text-xs">{STATUS_CONFIG[s]?.label ?? s}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Badge variant={selectedOrder.payment_status === 'paid' ? 'default' : 'secondary'} className="text-[10px] ml-auto">
-                  {selectedOrder.payment_status}
-                </Badge>
+              <div className="flex items-center gap-3 flex-wrap">
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs text-muted-foreground font-medium">Order Status</span>
+                  <Select
+                    value={selectedOrder.status}
+                    onValueChange={(v) => updateStatus(selectedOrder.id, v as OrderStatus)}
+                    disabled={!!updatingId}
+                  >
+                    <SelectTrigger className="h-8 w-36 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ALL_STATUS_OPTIONS.map(s => (
+                        <SelectItem key={s} value={s} className="text-xs">{STATUS_CONFIG[s]?.label ?? s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs text-muted-foreground font-medium">Payment Status</span>
+                  <Select
+                    value={selectedOrder.payment_status}
+                    onValueChange={(v) => updatePaymentStatus(selectedOrder.id, v)}
+                    disabled={!!updatingId}
+                  >
+                    <SelectTrigger className="h-8 w-36 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending" className="text-xs">Pending</SelectItem>
+                      <SelectItem value="paid" className="text-xs">Paid</SelectItem>
+                      <SelectItem value="failed" className="text-xs">Failed</SelectItem>
+                      <SelectItem value="refunded" className="text-xs">Refunded</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <Separator />

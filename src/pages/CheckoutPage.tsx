@@ -39,17 +39,31 @@ export function CheckoutPage() {
   const form = useForm<CheckoutForm>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
-      full_name: profile?.full_name ?? '',
-      phone: profile?.phone ?? '',
-      address: profile?.address_line1 ?? '',
-      city: profile?.city ?? '',
-      state: profile?.state ?? '',
-      pincode: profile?.pincode ?? '',
+      full_name: '',
+      phone: '',
+      address: '',
+      city: '',
+      state: '',
+      pincode: '',
       payment_method: 'cod',
     },
   })
 
-  const shipping = total >= 999 ? 0 : 99
+  React.useEffect(() => {
+    if (profile) {
+      form.reset({
+        full_name: profile.full_name ?? '',
+        phone: profile.phone ?? '',
+        address: profile.address_line1 ?? '',
+        city: profile.city ?? '',
+        state: profile.state ?? '',
+        pincode: profile.pincode ?? '',
+        payment_method: form.getValues('payment_method'),
+      })
+    }
+  }, [profile])
+
+  const shipping = total >= 999 ? 0 : 59
   const grandTotal = total + shipping
 
   const onSubmit = async (data: CheckoutForm) => {
@@ -67,8 +81,10 @@ export function CheckoutPage() {
           order_number: orderNumber,
           status: 'pending',
           payment_status: data.payment_method === 'cod' ? 'pending' : 'paid',
+          payment_method: data.payment_method,
           subtotal: total,
           discount: 0,
+          shipping_cost: shipping,
           total: grandTotal,
           shipping_name: data.full_name,
           shipping_phone: data.phone,

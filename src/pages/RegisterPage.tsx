@@ -47,7 +47,7 @@ export function RegisterPage() {
     <div className="min-h-screen flex">
       <div className="hidden lg:flex flex-1 bg-gradient-to-br from-primary/20 via-secondary to-accent/10 items-center justify-center p-12 relative overflow-hidden">
         <div className="relative text-center space-y-4 max-w-sm">
-          <img src="/designarena_image_99wb2m6q.png" alt="AuraLoom" className="h-20 w-auto mx-auto" />
+          <img src="/AuraLoom_Logo.png" alt="AuraLoom" className="h-28 w-auto mx-auto" />
           <p className="text-lg font-medium text-foreground/80">
             Join thousands of happy shoppers at AuraLoom
           </p>
@@ -64,7 +64,7 @@ export function RegisterPage() {
       <div className="flex-1 flex items-center justify-center p-6 bg-background">
         <div className="w-full max-w-sm space-y-6">
           <div className="lg:hidden text-center mb-4">
-            <Link to="/"><img src="/designarena_image_99wb2m6q.png" alt="AuraLoom" className="h-12 w-auto mx-auto" /></Link>
+            <Link to="/"><img src="/AuraLoom_Logo.png" alt="AuraLoom" className="h-16 w-auto mx-auto" /></Link>
           </div>
 
           <div>

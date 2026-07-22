@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Heart, ShoppingBag, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Layout } from '@/components/layout/Layout'
-import { getImageUrl } from '@/lib/supabase'
+import { supabase, getImageUrl } from '@/lib/supabase'
 import type { Product } from '@/types'
 import { toast } from 'sonner'
 
@@ -35,16 +35,11 @@ export function WishlistPage() {
         return
       }
       setLoading(true)
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/products?id=in.(${productIds.join(',')})&select=*,subcategory:subcategories(*,category:categories(*))`,
-        {
-          headers: {
-            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-        }
-      )
-      const data = await res.json()
+      const { data, error } = await supabase
+        .from('products')
+        .select('*, subcategory:subcategories(*, category:categories(*))')
+        .in('id', productIds)
+      if (error) { toast.error('Failed to load wishlist'); setLoading(false); return }
       setProducts(data ?? [])
       setLoading(false)
     }

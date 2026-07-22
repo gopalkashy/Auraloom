@@ -8,6 +8,7 @@ import { ProductCard } from '@/components/shop/ProductCard'
 import { Layout } from '@/components/layout/Layout'
 import { supabase } from '@/lib/supabase'
 import type { Category, Product } from '@/types'
+import { toast } from 'sonner'
 
 const FASHION_QUOTES = [
   { text: 'Fashions fade, style is eternal.', author: 'Yves Saint Laurent' },
@@ -58,7 +59,7 @@ function TypewriterQuote() {
           <span className="inline-block w-0.5 h-[0.9em] bg-white ml-1 align-left animate-pulse opacity-90" />
           &rdquo;
         </p>
-        <p className="text-xl md:text-1xl lg:text-2xl xl:text-2xl font-semibold text-amber-300 mt-3 tracking-widest uppercase transition-all duration-500">
+        <p className="text-xl md:text-xl lg:text-2xl xl:text-2xl font-semibold text-amber-300 mt-3 tracking-widest uppercase transition-all duration-500">
           — {FASHION_QUOTES[index].author}
         </p>
       </div>
@@ -79,7 +80,7 @@ export function HomePage() {
 
   React.useEffect(() => {
     const load = async () => {
-      const [{ data: cats }, { data: prods }] = await Promise.all([
+      const [{ data: cats, error: catsErr }, { data: prods, error: prodsErr }] = await Promise.all([
         supabase.from('categories').select('*').eq('is_active', true).order('sort_order'),
         supabase
           .from('products')
@@ -89,6 +90,7 @@ export function HomePage() {
           .order('created_at', { ascending: false })
           .limit(8),
       ])
+      if (catsErr || prodsErr) toast.error('Failed to load content')
       setCategories(cats ?? [])
       setFeatured(prods ?? [])
       setLoading(false)

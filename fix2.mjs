@@ -1,4 +1,38 @@
-import { Link } from 'react-router-dom'
+import fs from 'fs'
+
+// === Fix ReturnPolicyPage.tsx ===
+const rtn = 'C:/Users/611626781/Downloads/AuraLoom/project/src/pages/ReturnPolicyPage.tsx'
+let c = fs.readFileSync(rtn, 'utf8')
+
+// Fix 1: Section 2 - add missing </div> for pl-13 div
+// The pattern is: amber div, then directly </section> (missing </div>)
+const fix1 = 'rounded-xl p-4 mt-3">\n                <p className="text-amber-800 dark:text-amber-200 text-sm font-medium">Tip: Please try on your items carefully. For clothing, we recommend trying over your own clothes to avoid soiling.</p>\n              </div>\n          </section>'
+const fix1result = 'rounded-xl p-4 mt-3">\n                <p className="text-amber-800 dark:text-amber-200 text-sm font-medium">Tip: Please try on your items carefully. For clothing, we recommend trying over your own clothes to avoid soiling.</p>\n              </div>\n            </div>\n          </section>'
+
+c = c.replace(fix1, fix1result)
+
+// Fix 2: End of file - add missing </div> for container div
+// Pattern: </p>\n        </div>\n    </Layout>
+c = c.replace('</p>\n        </div>\n    </Layout>', '</p>\n        </div>\n      </div>\n    </Layout>')
+
+fs.writeFileSync(rtn, c, 'utf8')
+
+// Verify
+const divOpens = (c.match(/<div[^>]*>/g)||[]).filter(t => !t.endsWith('/>')).length
+const divCloses = (c.match(/<\/div>/g)||[]).length
+console.log(`ReturnPolicyPage: div ${divOpens}/${divCloses} ${divOpens===divCloses?'OK':'FAIL'}`)
+
+// === Fix Footer.tsx ===
+const footer = 'C:/Users/611626781/Downloads/AuraLoom/project/src/components/layout/Footer.tsx'
+let f = fs.readFileSync(footer, 'utf8')
+
+// Footer is missing closing </div> for the grid's children divs
+// The structure should be: <div.grid> <div.brand>..</div> <div.shop>..</div> <div.help>..</div> <div.contact>..</div> <Separator/> <div.copyright>..</div> </div.container> </footer>
+// Currently the brand div is not closed, and the contact div is not started (its content is in the wrong place)
+
+// Actually looking at the file again more carefully - the structure is wrong due to the earlier corruption
+// Let me just rewrite the footer completely
+const footerCorrect = `import { Link } from 'react-router-dom'
 import { Share2, Heart, Bookmark, Mail, Phone, MapPin } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 
@@ -10,7 +44,7 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <img
-              src="/AuraLoom_Logo.png"
+              src="/Auraloom_white_logo.jpg"
               alt="AuraLoom"
               className="h-14 w-auto rounded-lg mb-4"
             />
@@ -28,7 +62,6 @@ export function Footer() {
                 <Bookmark className="size-4" />
               </a>
             </div>
-          </div>
 
           {/* Shop */}
           <div>
@@ -71,7 +104,6 @@ export function Footer() {
               </li>
             </ul>
           </div>
-        </div>
 
         <Separator className="my-8 bg-background/20" />
 
@@ -81,8 +113,20 @@ export function Footer() {
             <a href="#" className="hover:text-primary">Privacy Policy</a>
             <a href="#" className="hover:text-primary">Terms of Service</a>
           </div>
-        </div>
       </div>
     </footer>
   )
 }
+`
+
+fs.writeFileSync(footer, footerCorrect, 'utf8')
+
+// Verify Footer
+const fc = fs.readFileSync(footer, 'utf8')
+const fOpens = (fc.match(/<div[^>]*>/g)||[]).filter(t => !t.endsWith('/>')).length
+const fCloses = (fc.match(/<\/div>/g)||[]).length
+const fLayoutO = (fc.match(/<footer>/g)||[]).length
+const fLayoutC = (fc.match(/<\/footer>/g)||[]).length
+console.log(`Footer: div ${fOpens}/${fCloses} ${fOpens===fCloses?'OK':'FAIL'} | footer ${fLayoutO}/${fLayoutC}`)
+
+console.log('\nDone!')

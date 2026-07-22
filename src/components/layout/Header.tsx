@@ -69,7 +69,7 @@ export function Header() {
               <SheetHeader>
                 <SheetTitle>
                   <Link to="/" onClick={() => setMobileOpen(false)}>
-                    <img src="/AuraLoom_Logo.png" alt="AuraLoom" className="w-32 h-auto" />
+                    <img src="/Auraloom_white_logo.png" alt="AuraLoom" className="w-32 h-auto" />
                   </Link>
                 </SheetTitle>
               </SheetHeader>
@@ -122,7 +122,7 @@ export function Header() {
 
           {/* Logo */}
           <Link to="/" className="flex-shrink-0">
-            <img src="/AuraLoom_Logo.png" alt="AuraLoom" className="w-36 h-auto" />
+            <img src="/Auraloom_white_logo.png" alt="AuraLoom" className="w-36 h-auto" />
           </Link>
 
           {/* Desktop Nav */}

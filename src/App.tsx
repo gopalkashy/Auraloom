@@ -18,6 +18,9 @@ import { WishlistPage } from '@/pages/WishlistPage'
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage'
 import { ResetPasswordPage } from '@/pages/ResetPasswordPage'
 import { VerifyEmailPage } from '@/pages/VerifyEmailPage'
+import { ShippingPolicyPage } from '@/pages/ShippingPolicyPage'
+import { ReturnPolicyPage } from '@/pages/ReturnPolicyPage'
+import { FAQPage } from '@/pages/FAQPage'
 import { AdminDashboard } from '@/pages/admin/AdminDashboard'
 import { AdminCategories } from '@/pages/admin/AdminCategories'
 import { AdminProducts } from '@/pages/admin/AdminProducts'
@@ -58,6 +61,9 @@ export function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/shipping-policy" element={<ShippingPolicyPage />} />
+        <Route path="/return-policy" element={<ReturnPolicyPage />} />
+        <Route path="/faq" element={<FAQPage />} />
 
         {/* Auth-required routes */}
         <Route path="/checkout" element={<AuthRoute><CheckoutPage /></AuthRoute>} />

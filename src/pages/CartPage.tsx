@@ -10,7 +10,7 @@ export function CartPage() {
   const { items, itemCount, total, removeItem, updateQuantity, clearCart } = useCart()
   const navigate = useNavigate()
 
-  const shipping = total >= 999 ? 0 : 99
+  const shipping = total >= 999 ? 0 : 59
   const grandTotal = total + shipping
 
   if (itemCount === 0) {
@@ -138,7 +138,7 @@ export function CartPage() {
                     <span>₹{shipping}</span>
                   )}
                 </div>
-                {shipping > 0 && (
+                {shipping > 0 && total < 999 && (
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-secondary/60 p-2.5 rounded-lg">
                     <Tag className="size-3.5 text-primary" />
                     Add ₹{(999 - total).toLocaleString('en-IN')} more for free shipping!

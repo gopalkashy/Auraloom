@@ -74,8 +74,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (session?.user) {
-        // Small delay to allow the trigger to create the profile row
-        await new Promise(r => setTimeout(r, 500))
         await fetchProfile(session.user.id)
       } else {
         setProfile(null)

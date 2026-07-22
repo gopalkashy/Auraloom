@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { supabase } from '@/lib/supabase'
 import type { LocalCartItem, Product } from '@/types'
 
 interface CartContextValue {
@@ -15,9 +16,11 @@ interface CartContextValue {
 
 const CartContext = React.createContext<CartContextValue | undefined>(undefined)
 
-const CART_KEY = 'auraloom_cart'
+const CART_KEY = 'auraloom_cart_v2'
 
-function loadCart(): LocalCartItem[] {
+type StoredCartItem = { productId: string; quantity: number }
+
+function loadStoredCart(): StoredCartItem[] {
   try {
     const stored = localStorage.getItem(CART_KEY)
     return stored ? JSON.parse(stored) : []
@@ -27,11 +30,40 @@ function loadCart(): LocalCartItem[] {
 }
 
 function saveCart(items: LocalCartItem[]) {
-  localStorage.setItem(CART_KEY, JSON.stringify(items))
+  const slim: StoredCartItem[] = items.map(i => ({ productId: i.product.id, quantity: i.quantity }))
+  localStorage.setItem(CART_KEY, JSON.stringify(slim))
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = React.useState<LocalCartItem[]>(loadCart)
+  const [items, setItems] = React.useState<LocalCartItem[]>([])
+
+  // Hydrate cart from DB on mount to get fresh prices/stock
+  React.useEffect(() => {
+    const stored = loadStoredCart()
+    if (stored.length === 0) return
+
+    const hydrate = async () => {
+      const ids = stored.map(s => s.productId)
+      const { data } = await supabase
+        .from('products')
+        .select('*, subcategory:subcategories(*, category:categories(*))')
+        .in('id', ids)
+        .eq('is_active', true)
+
+      if (!data) return
+
+      const hydrated: LocalCartItem[] = stored
+        .map(s => {
+          const product = data.find(p => p.id === s.productId)
+          if (!product) return null
+          return { product, quantity: Math.min(s.quantity, product.stock_qty) }
+        })
+        .filter((i): i is LocalCartItem => i !== null && i.quantity > 0)
+
+      setItems(hydrated)
+    }
+    hydrate()
+  }, [])
 
   React.useEffect(() => {
     saveCart(items)

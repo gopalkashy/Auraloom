@@ -71,6 +71,7 @@ export interface Order {
   order_number: string
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'out_for_delivery' | 'delivered' | 'cancelled' | 'returned'
   payment_status: 'pending' | 'paid' | 'failed' | 'refunded'
+  payment_method: 'cod' | 'upi' | 'card' | null
   subtotal: number
   discount: number
   shipping_cost: number

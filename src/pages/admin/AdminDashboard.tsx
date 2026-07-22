@@ -23,10 +23,13 @@ interface Stats {
 
 const STATUS_COLORS: Record<string, string> = {
   pending: 'text-yellow-600',
+  confirmed: 'text-cyan-600',
   processing: 'text-blue-600',
   shipped: 'text-purple-600',
+  out_for_delivery: 'text-orange-600',
   delivered: 'text-green-600',
   cancelled: 'text-red-600',
+  returned: 'text-gray-500',
 }
 
 export function AdminDashboard() {
@@ -80,30 +83,27 @@ export function AdminDashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {METRIC_CARDS.map(({ label, value, icon: Icon, color, href }) => {
-            const CardWrapper = href ? Link : 'div'
-            return (
-              <Card key={label} className={href ? 'cursor-pointer hover:border-primary/50 transition-colors' : ''}>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
-                    <Icon className={`size-5 ${color}`} />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {loading ? (
-                    <Skeleton className="h-7 w-16" />
-                  ) : href ? (
-                    <CardWrapper to={href} className="text-2xl font-bold hover:text-primary transition-colors">
-                      {value}
-                    </CardWrapper>
-                  ) : (
-                    <p className="text-2xl font-bold">{value}</p>
-                  )}
-                </CardContent>
-              </Card>
-            )
-          })}
+          {METRIC_CARDS.map(({ label, value, icon: Icon, color, href }) => (
+            <Card key={label} className={href ? 'cursor-pointer hover:border-primary/50 transition-colors' : ''}>
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
+                  <Icon className={`size-5 ${color}`} />
+                </div>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <Skeleton className="h-7 w-16" />
+                ) : href ? (
+                  <Link to={href} className="text-2xl font-bold hover:text-primary transition-colors">
+                    {value}
+                  </Link>
+                ) : (
+                  <p className="text-2xl font-bold">{value}</p>
+                )}
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {/* Recent Orders */}

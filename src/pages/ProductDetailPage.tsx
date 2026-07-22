@@ -29,12 +29,13 @@ export function ProductDetailPage() {
     if (!slug) return
     const load = async () => {
       setLoading(true)
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('products')
         .select('*, subcategory:subcategories(*, category:categories(*))')
         .eq('slug', slug)
         .eq('is_active', true)
         .single()
+      if (error) { toast.error('Failed to load product'); setLoading(false); return }
       setProduct(data)
       setSelectedImage(0)
       setQty(1)
@@ -248,11 +249,7 @@ export function ProductDetailPage() {
                   </div>
                 </div>
 
-                <Button
-                  size="lg"
-                  className="w-full gap-2"
-                  onClick={handleAddToCart}
-                >
+                <Button size="lg" className="w-full gap-2" onClick={handleAddToCart}>
                   {inCart ? <Check className="size-5" /> : <ShoppingBag className="size-5" />}
                   {inCart ? `In Cart (${cartQty})` : 'Add to Cart'}
                 </Button>

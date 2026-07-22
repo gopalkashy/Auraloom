@@ -139,8 +139,8 @@ export function OrderConfirmationPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping</span>
-                <span className={order.total - order.subtotal === 0 ? 'text-green-600' : ''}>
-                  {order.total - order.subtotal === 0 ? 'FREE' : `₹${order.total - order.subtotal}`}
+                <span className={order.shipping_cost === 0 ? 'text-green-600' : ''}>
+                  {order.shipping_cost === 0 ? 'FREE' : `₹${order.shipping_cost}`}
                 </span>
               </div>
               <div className="flex justify-between font-bold text-base pt-1">
@@ -167,13 +167,13 @@ export function OrderConfirmationPage() {
 
         <div className="flex flex-col sm:flex-row gap-3 mt-8">
           <Button asChild className="flex-1 gap-2">
-            <Link to="/profile">
+            <Link to="/profile?tab=orders">
               <Package className="size-4" />
               View Order Details
             </Link>
           </Button>
           <Button variant="outline" asChild className="flex-1 gap-2">
-            <Link to="/profile">
+            <Link to="/profile?tab=orders">
               <Truck className="size-4" />
               Track Order
             </Link>

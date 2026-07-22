@@ -8,15 +8,35 @@ import { ProductCard } from '@/components/shop/ProductCard'
 import { Layout } from '@/components/layout/Layout'
 import { supabase } from '@/lib/supabase'
 import type { Product } from '@/types'
+import { toast } from 'sonner'
 
 export function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const query = searchParams.get('q') ?? ''
+  const featuredOnly = searchParams.get('featured') === 'true'
   const [inputValue, setInputValue] = React.useState(query)
   const [products, setProducts] = React.useState<Product[]>([])
   const [loading, setLoading] = React.useState(false)
 
   React.useEffect(() => {
+    if (featuredOnly) {
+      const load = async () => {
+        setLoading(true)
+        const { data, error } = await supabase
+          .from('products')
+          .select('*, subcategory:subcategories(*, category:categories(*))')
+          .eq('is_active', true)
+          .eq('is_featured', true)
+          .order('created_at', { ascending: false })
+          .limit(50)
+        if (error) toast.error('Failed to load products')
+        setProducts(data ?? [])
+        setLoading(false)
+      }
+      load()
+      return
+    }
+
     if (!query) {
       setProducts([])
       setLoading(false)
@@ -75,7 +95,7 @@ export function SearchPage() {
       setLoading(false)
     }
     search()
-  }, [query])
+  }, [query, featuredOnly])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -111,14 +131,16 @@ export function SearchPage() {
         </div>
 
         {/* Results header */}
-        {query && (
+        {(query || featuredOnly) && (
           <div className="mb-6">
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
               {loading ? (
                 <Skeleton className="h-8 w-48" />
               ) : (
                 <>
-                  {products.length} result{products.length !== 1 ? 's' : ''} for "{query}"
+                  {featuredOnly
+                    ? `${products.length} Featured Product${products.length !== 1 ? 's' : ''}`
+                    : `${products.length} result${products.length !== 1 ? 's' : ''} for "${query}"`}
                 </>
               )}
             </h1>
@@ -126,7 +148,7 @@ export function SearchPage() {
         )}
 
         {/* Results */}
-        {!query ? (
+        {!query && !featuredOnly ? (
           <div className="text-center py-20">
             <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mx-auto mb-4">
               <Search className="w-8 h-8 text-muted-foreground" />

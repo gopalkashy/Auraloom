@@ -54,7 +54,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const sidebarContent = (
     <div className="flex flex-col h-full py-4 px-3">
       <div className="mb-6 px-1">
-        <img src="/designarena_image_99wb2m6q.png" alt="AuraLoom" className="h-10 w-auto" />
+        <img src="/AuraLoom_Logo.png" alt="AuraLoom" className="w-full h-16 object-fill" />
         <p className="text-xs text-muted-foreground mt-1 font-medium uppercase tracking-wider">Admin Panel</p>
       </div>
 
@@ -96,7 +96,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             {sidebarContent}
           </SheetContent>
         </Sheet>
-        <img src="/designarena_image_99wb2m6q.png" alt="AuraLoom Admin" className="h-8 w-auto" />
+        <img src="/AuraLoom_Logo.png" alt="AuraLoom Admin" className="h-8 w-auto" />
       </div>
 
       {/* Main content */}
