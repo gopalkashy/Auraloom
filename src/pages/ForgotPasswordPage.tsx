@@ -1,30 +1,45 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import { Mail, ArrowLeft, Send, CheckCircle } from 'lucide-react'
+import { Mail, ArrowLeft, Send, CheckCircle, Copy, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useAuth } from '@/contexts/AuthContext'
 import { toast } from 'sonner'
+import { requestPasswordReset } from '@/lib/resetPassword'
 
 export function ForgotPasswordPage() {
-  const { sendPasswordResetEmail } = useAuth()
   const [email, setEmail] = React.useState('')
   const [loading, setLoading] = React.useState(false)
   const [sent, setSent] = React.useState(false)
+  const [resetLink, setResetLink] = React.useState<string | null>(null)
+  const [copied, setCopied] = React.useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email) { toast.error('Please enter your email address'); return }
     setLoading(true)
-    const { error } = await sendPasswordResetEmail(email)
+    const { error, resetLink: link, message } = await requestPasswordReset(email)
     if (error) {
       toast.error(error)
     } else {
       setSent(true)
-      toast.success('Reset link sent! Check your email.')
+      setResetLink(link)
+      if (link) {
+        toast.success('Reset link generated!')
+      } else {
+        toast.success(message ?? 'If the email is registered, a reset link has been sent.')
+      }
     }
     setLoading(false)
+  }
+
+  const copyLink = () => {
+    if (resetLink) {
+      navigator.clipboard.writeText(resetLink)
+      setCopied(true)
+      toast.success('Link copied to clipboard!')
+      setTimeout(() => setCopied(false), 2000)
+    }
   }
 
   if (sent) {
@@ -52,6 +67,39 @@ export function ForgotPasswordPage() {
               <p className="text-muted-foreground text-sm mt-2">
                 We've sent a password reset link to <strong className="text-foreground">{email}</strong>
               </p>
+
+              {/* Show the reset link directly on screen (dev mode without email service) */}
+              {resetLink && (
+                <div className="mt-4 p-3 bg-secondary/80 rounded-lg border text-left">
+                  <p className="text-xs font-medium text-muted-foreground mb-1.5">
+                    🔗 Dev Mode — Your Reset Link (copy & open in new tab)
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <code className="text-xs text-foreground break-all flex-1 bg-background/50 p-2 rounded border">
+                      {resetLink}
+                    </code>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={copyLink}
+                      className="shrink-0 gap-1"
+                    >
+                      <Copy className="size-3.5" />
+                      {copied ? 'Copied!' : 'Copy'}
+                    </Button>
+                  </div>
+                  <a
+                    href={resetLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-2"
+                  >
+                    <ExternalLink className="size-3" /> Open reset link
+                  </a>
+                </div>
+              )}
+
               <p className="text-muted-foreground text-xs mt-3">
                 Didn't receive the email? Check your spam folder or{' '}
                 <button

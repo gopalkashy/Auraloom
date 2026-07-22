@@ -1,0 +1,22 @@
+-- ============================================================
+-- AuraLoom — Exported Data from Bolt Supabase
+-- ============================================================
+
+-- ============================================================
+-- ⚠️  COULD NOT CONNECT TO SUPABASE INSTANCE
+-- ============================================================
+--
+-- The Supabase project at the URL in your .env file is unreachable.
+-- This is expected — your Bolt-managed Supabase was paused/stopped.
+--
+-- ✅ NEXT STEPS:
+--
+-- 1. Create a NEW Supabase project at https://supabase.com
+-- 2. Run "complete_migration.sql" in the SQL Editor to create all tables
+--    (this also includes seed data for 3 categories + 12 subcategories)
+-- 3. Update your .env file with the new project URL and anon key
+-- 4. Re-run this script to extract any data (if you had products/orders)
+--
+-- ============================================================
+-- DATA EXTRACTION COMPLETE (no connection)
+-- ============================================================

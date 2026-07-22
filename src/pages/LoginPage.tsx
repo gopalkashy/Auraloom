@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { Eye, EyeOff, LogIn, Lock } from 'lucide-react'
+import { Eye, EyeOff, LogIn } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -80,9 +80,8 @@ export function LoginPage() {
                   <Label htmlFor="password">Password</Label>
                   <Link
                     to="/forgot-password"
-                    className="text-xs text-primary hover:underline font-medium flex items-center gap-1"
+                    className="text-xs text-primary hover:underline font-medium"
                   >
-                    <Lock className="size-3" />
                     Forgot password?
                   </Link>
                 </div>
