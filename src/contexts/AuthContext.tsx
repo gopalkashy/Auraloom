@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase, getSiteUrl } from '@/lib/supabase'
 import type { Profile } from '@/types'
 import type { User, Session } from '@supabase/supabase-js'
 
@@ -13,6 +13,9 @@ interface AuthContextValue {
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>
   signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
+  sendPasswordResetEmail: (email: string) => Promise<{ error: string | null }>
+  updatePassword: (newPassword: string) => Promise<{ error: string | null }>
+  isPasswordRecovery: boolean
 }
 
 const AuthContext = React.createContext<AuthContextValue | undefined>(undefined)
@@ -22,6 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = React.useState<Session | null>(null)
   const [profile, setProfile] = React.useState<Profile | null>(null)
   const [loading, setLoading] = React.useState(true)
+  const [isPasswordRecovery, setIsPasswordRecovery] = React.useState(false)
 
   const fetchProfile = React.useCallback(async (userId: string) => {
     const { data } = await supabase
@@ -58,9 +62,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     init()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
+
+      // Track when user arrives from password recovery email
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsPasswordRecovery(true)
+      } else {
+        setIsPasswordRecovery(false)
+      }
 
       if (session?.user) {
         // Small delay to allow the trigger to create the profile row
@@ -104,10 +115,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (user) await fetchProfile(user.id)
   }
 
+  const sendPasswordResetEmail = async (email: string) => {
+    const siteUrl = getSiteUrl()
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${siteUrl}/reset-password`,
+    })
+    return { error: error?.message ?? null }
+  }
+
+  const updatePassword = async (newPassword: string) => {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    })
+    return { error: error?.message ?? null }
+  }
+
   const isAdmin = profile?.is_admin === true
 
   return (
-    <AuthContext.Provider value={{ user, session, profile, loading, isAdmin, signIn, signUp, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{
+      user, session, profile, loading, isAdmin,
+      signIn, signUp, signOut, refreshProfile,
+      sendPasswordResetEmail, updatePassword, isPasswordRecovery,
+    }}>
       {children}
     </AuthContext.Provider>
   )
