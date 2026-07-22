@@ -1,5 +1,4 @@
 
-
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 import { Mail, ArrowLeft, Send, CheckCircle } from 'lucide-react'
@@ -15,7 +14,7 @@ export function ForgotPasswordPage() {
   const [loading, setLoading] = React.useState(false)
   const [sent, setSent] = React.useState(false)
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!email) { toast.error('Please enter your email address'); return }
     setLoading(true)

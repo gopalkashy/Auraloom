@@ -19,7 +19,7 @@ export function ResetPasswordPage() {
   const [success, setSuccess] = React.useState(false)
   const hasRecoveryAccess = isPasswordRecovery && user
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!password) { toast.error('Please enter a new password'); return }
     if (password.length < 6) { toast.error('Password must be at least 6 characters'); return }
