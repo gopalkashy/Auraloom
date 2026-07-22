@@ -20,6 +20,7 @@ const ALL_STATUS_OPTIONS = [
   'pending', 'confirmed', 'processing', 'shipped', 'out_for_delivery', 'delivered', 'cancelled', 'returned'
 ] as const
 type OrderStatus = typeof ALL_STATUS_OPTIONS[number]
+type PaymentStatus = Order['payment_status']
 
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   pending: { label: 'Pending', className: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' },
@@ -74,7 +75,7 @@ export function AdminOrderDetail() {
       toast.error('Failed to update payment status')
     } else {
       toast.success('Payment status updated')
-      setOrder({ ...order, payment_status: newStatus })
+      setOrder({ ...order, payment_status: newStatus as PaymentStatus })
     }
     setUpdating(false)
   }

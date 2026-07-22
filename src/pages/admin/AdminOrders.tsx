@@ -20,6 +20,7 @@ type OrderWithItems = Order & { order_items: OrderItem[] }
 
 const ALL_STATUS_OPTIONS = ['pending', 'confirmed', 'processing', 'shipped', 'out_for_delivery', 'delivered', 'cancelled', 'returned'] as const
 type OrderStatus = typeof ALL_STATUS_OPTIONS[number]
+type PaymentStatus = Order['payment_status']
 
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   pending: { label: 'Pending', className: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' },
@@ -73,8 +74,8 @@ export function AdminOrders() {
     if (error) { toast.error('Failed to update payment status') }
     else {
       toast.success('Payment status updated')
-      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, payment_status: paymentStatus } : o))
-      if (selectedOrder?.id === orderId) setSelectedOrder(prev => prev ? { ...prev, payment_status: paymentStatus } : prev)
+      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, payment_status: paymentStatus as PaymentStatus } : o))
+      if (selectedOrder?.id === orderId) setSelectedOrder(prev => prev ? { ...prev, payment_status: paymentStatus as PaymentStatus } : prev)
     }
     setUpdatingId(null)
   }
@@ -127,7 +128,6 @@ export function AdminOrders() {
                 </thead>
                 <tbody className="divide-y">
                   {filtered.map(order => {
-                    const cfg = STATUS_CONFIG[order.status as OrderStatus] ?? STATUS_CONFIG.pending
                     return (
                       <tr key={order.id} className="hover:bg-secondary/20 transition-colors">
                         <td className="px-4 py-3">
