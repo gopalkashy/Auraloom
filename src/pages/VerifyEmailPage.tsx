@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { Mail, ShieldCheck, CheckCircle, ArrowLeft } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 
