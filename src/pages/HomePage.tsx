@@ -68,9 +68,9 @@ function TypewriterQuote() {
 }
 
 const CATEGORY_IMAGES: Record<string, string> = {
-  'ladies-bags': 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80',
-  'artificial-jewellery': 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80',
-  'ladies-clothes': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
+  'ladies-bags': '/Ladies_Bags.png',
+  'artificial-jewellery': '/Artificial_jewellery.png',
+  'ladies-clothes': '/ladies_clothes.png',
 }
 
 export function HomePage() {

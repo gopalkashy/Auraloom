@@ -29,8 +29,7 @@ export function RegisterPage() {
     setLoading(true)
     const { error } = await signUp(form.email, form.password, form.fullName)
     if (error === 'CONFIRM_EMAIL') {
-      toast.success('Account created! Please check your email to confirm, then sign in.')
-      navigate('/login', { replace: true })
+      navigate(`/verify-email?email=${encodeURIComponent(form.email)}&redirect=${encodeURIComponent(redirect)}`, { replace: true })
     } else if (error) {
       toast.error(error)
     } else {

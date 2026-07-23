@@ -90,10 +90,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signUp = async (email: string, password: string, fullName: string) => {
+    const siteUrl = getSiteUrl()
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName } },
+      options: {
+        data: { full_name: fullName },
+        emailRedirectTo: `${siteUrl}/verify-email?type=signup`,
+      },
     })
     if (error) return { error: error.message }
 
